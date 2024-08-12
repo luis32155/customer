@@ -1,0 +1,47 @@
+server:
+  port: 8080  # El puerto en el que se ejecutará el customer-service
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/customerdb  # URL de la base de datos MySQL
+    username: root  # Usuario de la base de datos
+    password: yourpassword  # Contraseña de la base de datos
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update  # Configura el comportamiento de Hibernate respecto al esquema de la base de datos
+    show-sql: true  # Muestra las consultas SQL en la consola para depuración
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect  # Dialecto de MySQL para Hibernate
+
+  kafka:
+    bootstrap-servers: localhost:9092  # Dirección del servidor Kafka
+    consumer:
+      group-id: customer-service-group  # Grupo de consumidores para customer-service
+      auto-offset-reset: earliest  # Ajusta para comenzar a consumir desde el inicio si no hay offset previo
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+logging:
+  level:
+    org.springframework: INFO  # Nivel de log para los componentes de Spring
+    com.example.customerservice: DEBUG  # Nivel de log para el paquete del servicio
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Exponer todos los endpoints de Actuator
+
+# Configuración de Actuator para monitorización
+actuator:
+  endpoints:
+    enabled-by-default: true
+  health:
+    enabled: true
+  info:
+    enabled: true
